@@ -10,20 +10,31 @@ function App() {
   const [duracao, setDuracao] = useState("");
   const [listaDisciplinas, setListaDisciplinas] = useState([])
 
-  const addItem = () => {
-    if(disciplina === "" || duracao === "") {
-      alert("Preencha todas as informações")
+  const itemDaLista = {
+    id: id =="" ? Date.now() : id,
+    disciplina: disciplina,
+    duracao: duracao,
+  }
+  
+  const addItem = (id,event) => {
+    // debugger
+    event.preventDefault();
+    if(validaCampo(itemDaLista)){
       return;
     }
-    setListaDisciplinas([...listaDisciplinas,{
-      id: Date.now(),
-      disciplina: disciplina,
-      duracao: duracao,
-    },
-    ])
-    setDisciplina("");
-    setDuracao("");
-    setId("");
+    
+    if(id != ""){
+      const newListaDisciplinas = listaDisciplinas.slice()
+      let index = newListaDisciplinas.findIndex(item => {
+        return item.id == id;
+      });
+      newListaDisciplinas[index].disciplina = itemDaLista.disciplina;
+      newListaDisciplinas[index].duracao = itemDaLista.duracao; 
+    }else{
+      setListaDisciplinas([...listaDisciplinas,itemDaLista]);
+    }
+
+    limparForm();
   }
 
   const apagarItem = (id) => {
@@ -33,12 +44,35 @@ function App() {
     }
   }
 
-  const editarItem = (item) => {
-    alert(JSON.stringify(item));
-    setId(item.id);
-    setDisciplina(item.disciplina);
-    setDuracao(item.duracao);
+  const editarItem = (index) => {
+    let indexItem = index-1;
+    const itemResult = listaDisciplinas[indexItem];
+    setId(itemResult.id)
+    setDisciplina(itemResult.disciplina);
+    setDuracao(itemResult.duracao);
   }
+
+  const validaCampo = (item) =>{
+    let msg = "";
+    if(item.disciplina == "")
+      msg += "- Informe o nome da disciplina \n";
+    
+    if(item.duracao == "")
+      msg += "- Informe a carga horaria da disciplicn. \n";
+    
+    if(msg != ""){
+      alert(msg);
+      return true;
+    }
+    return false;
+  }
+
+  const limparForm = () =>{
+    setDisciplina("");
+    setDuracao("");
+    setId("");
+  }
+  
   
 
   return (
@@ -62,7 +96,7 @@ function App() {
                 <option value="80">80 horas</option>
               </select>
               <div>
-                <button className="btn success" onClick={addItem} > {id ? "Atualizar" : "Aidiconar"} </button>
+                <button className="btn success" onClick={(event) => addItem(id,event)} > {id ? "Atualizar" : "Aidiconar"} </button>
               </div>
           </form>
         </div>
@@ -78,7 +112,7 @@ function App() {
                     <button className="btnIcon danger_outline"> <FontAwesomeIcon icon={faTrashAlt} 
                     onClick={() => apagarItem(item.id)}/> </button>
                     <button className="btnIcon alert_outline"> <FontAwesomeIcon icon={faPencil} 
-                    onClick={() => editarItem(item)}/> </button>
+                    onClick={() => editarItem(index)}/> </button>
                   </div>
                 </li>
               ))}
