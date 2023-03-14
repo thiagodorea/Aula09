@@ -16,24 +16,38 @@ function App() {
     duracao: duracao,
   }
   
-  const addItem = (id,event) => {
+  const addItem = (event) => {
     // debugger
     event.preventDefault();
     if(validaCampo(itemDaLista)){
       return;
     }
     
-    if(id != ""){
-      const newListaDisciplinas = listaDisciplinas.slice()
-      let index = newListaDisciplinas.findIndex(item => {
-        return item.id == id;
-      });
-      newListaDisciplinas[index].disciplina = itemDaLista.disciplina;
-      newListaDisciplinas[index].duracao = itemDaLista.duracao; 
-    }else{
+    // if(id != ""){
+    //   const newListaDisciplinas = listaDisciplinas.slice()
+    //   let index = newListaDisciplinas.findIndex(item => {
+    //     return item.id == id;
+    //   });
+    //   newListaDisciplinas[index].disciplina = itemDaLista.disciplina;
+    //   newListaDisciplinas[index].duracao = itemDaLista.duracao; 
+    // }else{
       setListaDisciplinas([...listaDisciplinas,itemDaLista]);
-    }
+    // }
 
+    limparForm();
+  }
+
+  const editItem = (event) =>{
+    event.preventDefault();
+    if(validaCampo(itemDaLista)){
+      return;
+    }
+    const newListaDisciplinas = listaDisciplinas.slice()
+    let index = newListaDisciplinas.findIndex(item => {
+      return item.id == id;
+    });
+    newListaDisciplinas[index].disciplina = itemDaLista.disciplina;
+    newListaDisciplinas[index].duracao = itemDaLista.duracao; 
     limparForm();
   }
 
@@ -44,7 +58,7 @@ function App() {
     }
   }
 
-  const editarItem = (index) => {
+  const carregarDados = (index) => {
     let indexItem = index-1;
     const itemResult = listaDisciplinas[indexItem];
     setId(itemResult.id)
@@ -96,7 +110,7 @@ function App() {
                 <option value="80">80 horas</option>
               </select>
               <div>
-                <button className="btn success" onClick={(event) => addItem(id,event)} > {id ? "Atualizar" : "Aidiconar"} </button>
+                <button className="btn success" onClick={(event) => id ? editItem(event) : addItem(event)} > {id ? "Atualizar" : "Aidiconar"} </button>
               </div>
           </form>
         </div>
@@ -112,7 +126,7 @@ function App() {
                     <button className="btnIcon danger_outline"> <FontAwesomeIcon icon={faTrashAlt} 
                     onClick={() => apagarItem(item.id)}/> </button>
                     <button className="btnIcon alert_outline"> <FontAwesomeIcon icon={faPencil} 
-                    onClick={() => editarItem(index)}/> </button>
+                    onClick={() => carregarDados(index)}/> </button>
                   </div>
                 </li>
               ))}
